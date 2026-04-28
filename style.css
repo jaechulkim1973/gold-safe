@@ -189,6 +189,23 @@ select.fc{cursor:pointer}
 .hero h1{font-size:2rem;font-weight:700;line-height:1.4;margin-bottom:1rem}
 .hero p{color:var(--text2);font-size:1rem;line-height:1.6;margin-bottom:1.5rem}
 
+/* BLOCKCHAIN */
+.block-card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;margin-bottom:.8rem;position:relative;transition:var(--ease)}
+.block-card:hover{border-color:var(--gold-dark)}
+.block-card::before{content:'';position:absolute;left:50%;top:-10px;width:2px;height:10px;background:var(--gold-dark)}
+.block-card:first-child::before{display:none}
+.block-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.block-hd .block-num{font-family:'Outfit';font-weight:700;color:var(--gold)}
+.block-hd .block-time{font-size:.72rem;color:var(--text3)}
+.block-hash{font-family:'Courier New',monospace;font-size:.7rem;color:var(--blue);word-break:break-all;background:var(--bg-primary);padding:6px 10px;border-radius:6px;margin:4px 0}
+.block-data{font-size:.8rem;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:.5rem}
+.block-link{display:flex;align-items:center;justify-content:center;padding:4px 0;font-size:.7rem;color:var(--gold-dark)}
+.verify-ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:var(--rs);padding:1rem;text-align:center}
+.verify-ok h4{color:var(--green);margin-bottom:.3rem}
+.verify-fail{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:var(--rs);padding:1rem;text-align:center}
+.verify-fail h4{color:var(--red);margin-bottom:.3rem}
+.hash-display{font-family:'Courier New',monospace;font-size:.72rem;color:var(--blue);word-break:break-all}
+
 /* RESPONSIVE */
 @media(max-width:1024px){.stats{grid-template-columns:repeat(2,1fr)}.g2,.g23,.cg,.lt,.trust-grid,.acg{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.nav{display:none}.main{margin-left:0}.stats,.cg,.lt,.trust-grid,.acg,.g2,.g23,.cr-detail{grid-template-columns:1fr}.header{padding:0 1rem}.gpb{flex-direction:column;gap:.8rem;text-align:center}}

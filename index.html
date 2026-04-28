@@ -22,6 +22,7 @@
 <a class="nav-item" data-p="buy"><span class="ic">🪙</span>상품권 매입</a>
 <a class="nav-item" data-p="lockup"><span class="ic">🔒</span>락업 보관</a>
 <a class="nav-item" data-p="calc"><span class="ic">🧮</span>리워드 계산기</a>
+<a class="nav-item" data-p="chain"><span class="ic">⛓️</span>블록체인 발행</a>
 </div>
 <div class="nav-sec"><div class="nav-sec-t">자산</div>
 <a class="nav-item" data-p="wallet"><span class="ic">💳</span>Pay 월렛</a>
@@ -61,7 +62,8 @@
 <div class="page" id="p-buy">
 <h2 class="pg-title">🪙 금상품권 매입</h2>
 <p class="pg-sub">실물 금 교환권을 매입합니다. 매입 즉시 소유권이 귀속되며, Pay포인트 전환 또는 실물 수령이 가능합니다.</p>
-<div class="gpb"><div><h2>금 시세 <span id="gp">₩95,200</span>/g</h2><p>2026.04.29 기준 · 한국금거래소</p></div></div>
+<div class="gpb"><div><h2>금 시세 <span id="gp">₩95,200</span>/g</h2><p id="gpTime">시세 로딩중...</p></div><div style="display:flex;gap:8px;align-items:center"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span><span style="font-size:.78rem;color:var(--text2)">LIVE</span><button class="btn btn-o btn-sm" onclick="refreshPrice()">🔄 시세 갱신</button></div></div>
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}</style>
 <div class="notice"><span class="ni">ℹ️</span>매입 즉시 실물 소유권은 고객에게 귀속되며, 회사는 수탁 보관만을 수행합니다.</div>
 <h3 class="mb1">상품권 선택</h3>
 <div class="cg" id="certGrid">
@@ -191,6 +193,51 @@
 </div>
 <div class="card"><div class="card-hd"><h3>보유 금 시리얼번호</h3></div><div id="serials"><p style="color:var(--text3);text-align:center;padding:1rem">보유 금이 없습니다</p></div></div>
 </div>
+
+<!-- BLOCKCHAIN -->
+<div class="page" id="p-chain">
+<h2 class="pg-title">⛓️ 블록체인 상품권 발행</h2>
+<p class="pg-sub">모든 금상품권은 블록체인에 기록되어 위변조가 불가능합니다. SHA-256 해시로 연결된 불변 원장에서 발행·검증합니다.</p>
+<div class="notice"><span class="ni">🔐</span>각 상품권은 고유 해시값으로 <strong>위변조 방지</strong>되며, 블록체인 탐색기에서 누구나 검증할 수 있습니다.</div>
+
+<div class="g2 mb15">
+<div class="card">
+<div class="card-hd"><h3>🪙 상품권 발행 (Mint)</h3><span class="badge">On-Chain</span></div>
+<div class="fg"><label>중량 선택</label><select class="fc" id="mintWeight"><option value="1">1g</option><option value="5">5g</option><option value="10" selected>10g</option><option value="50">50g</option><option value="100">100g</option><option value="1000">1kg</option></select></div>
+<div class="fg"><label>소유자</label><input class="fc" id="mintOwner" value="홍길동" placeholder="소유자 이름"></div>
+<div class="fg"><label>순도</label><input class="fc" value="99.9% (24K)" readonly></div>
+<button class="btn btn-p btn-f btn-lg" onclick="mintCert()">⛓️ 블록체인 발행</button>
+</div>
+
+<div class="card">
+<div class="card-hd"><h3>🔍 상품권 검증</h3><span class="badge">Verify</span></div>
+<div class="fg"><label>해시값 또는 시리얼번호 입력</label><input class="fc" id="verifyInput" placeholder="0x... 또는 AU-2026-XXXXXX"></div>
+<button class="btn btn-p btn-f" onclick="verifyCert()">검증하기</button>
+<div id="verifyResult" style="margin-top:1rem"></div>
+</div>
+</div>
+
+<!-- Chain Stats -->
+<div class="stats" style="grid-template-columns:repeat(4,1fr)">
+<div class="st"><div class="si g">⛓️</div><div class="sv" id="chainLen">1</div><div class="sl">총 블록 수</div></div>
+<div class="st"><div class="si gr">🪙</div><div class="sv" id="chainCerts">0</div><div class="sl">발행 상품권</div></div>
+<div class="st"><div class="si bl">🔐</div><div class="sv" id="chainValid">✅</div><div class="sl">체인 무결성</div></div>
+<div class="st"><div class="si pu">#️⃣</div><div class="sv" id="chainAlgo">SHA-256</div><div class="sl">해시 알고리즘</div></div>
+</div>
+
+<!-- Block Explorer -->
+<div class="card mb15">
+<div class="card-hd"><h3>📦 블록 탐색기</h3><span class="badge">Explorer</span></div>
+<div id="blockExplorer"></div>
+</div>
+
+<!-- Issued Certificates -->
+<div class="card">
+<div class="card-hd"><h3>📜 발행된 상품권 목록</h3><button class="btn btn-o btn-sm" onclick="validateChain()">🔒 체인 무결성 검증</button></div>
+<table class="tbl"><thead><tr><th>블록#</th><th>시리얼</th><th>중량</th><th>소유자</th><th>해시</th><th>상태</th></tr></thead><tbody id="certList"></tbody></table>
+</div>
+</div>
+
 </div>
 
 <!-- MODALS -->
