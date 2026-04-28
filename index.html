@@ -6,9 +6,63 @@
 <title>골드세이프 - 금 실물 보관 멤버십</title>
 <meta name="description" content="금상품권 매입, 락업 보상, Pay포인트 전환 - 실물 기반 교환 서비스">
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
-<header class="header">
+
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="auth-screen">
+<div class="auth-bg"></div>
+<div class="auth-container">
+<div class="auth-logo"><div class="logo-icon" style="width:56px;height:56px;font-size:1.5rem">Au</div><h1 style="font-family:'Outfit';font-size:2rem;color:var(--gold);margin-top:.5rem">골드세이프</h1><p style="color:var(--text2);font-size:.9rem;margin-top:.3rem">금 실물 보관 · 유통 멤버십 플랫폼</p></div>
+
+<div class="auth-card">
+<div class="tabs" id="authTabs"><div class="tab active" onclick="switchAuth(this,'login')">로그인</div><div class="tab" onclick="switchAuth(this,'signup')">회원가입</div></div>
+
+<!-- LOGIN -->
+<div id="authLogin">
+<div class="fg"><label>이메일 또는 아이디</label><input class="fc" id="loginId" placeholder="email@example.com"></div>
+<div class="fg"><label>비밀번호</label><input class="fc" type="password" id="loginPw" placeholder="비밀번호 입력"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><label style="display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text2);cursor:pointer"><input type="checkbox" id="autoLogin"> 자동 로그인</label><a style="font-size:.8rem;color:var(--gold);cursor:pointer">비밀번호 찾기</a></div>
+<button class="btn btn-p btn-f btn-lg" onclick="doLogin()">로그인</button>
+<div class="auth-divider"><span>또는</span></div>
+<div class="auth-social">
+<button class="btn btn-o btn-f" onclick="socialLogin('kakao')" style="border-color:#FEE500;color:#3C1E1E;background:rgba(254,229,0,.15)">💬 카카오로 시작</button>
+<button class="btn btn-o btn-f" onclick="socialLogin('naver')" style="border-color:#03C75A;color:#03C75A;background:rgba(3,199,90,.08)">N 네이버로 시작</button>
+<button class="btn btn-o btn-f" onclick="socialLogin('google')" style="border-color:rgba(255,255,255,.2)">G 구글로 시작</button>
+</div>
+</div>
+
+<!-- SIGNUP -->
+<div id="authSignup" style="display:none">
+<div class="fg"><label>이름 (실명)</label><input class="fc" id="signName" placeholder="홍길동"></div>
+<div class="fg"><label>이메일</label><input class="fc" type="email" id="signEmail" placeholder="email@example.com"></div>
+<div class="fg"><label>휴대폰 번호</label><input class="fc" id="signPhone" placeholder="01012345678"></div>
+<div class="fg"><label>비밀번호</label><input class="fc" type="password" id="signPw" placeholder="8자 이상 영문+숫자+특수문자"><div id="pwStrength" style="margin-top:4px;font-size:.72rem"></div></div>
+<div class="fg"><label>비밀번호 확인</label><input class="fc" type="password" id="signPw2" placeholder="비밀번호 재입력"></div>
+<div class="fg"><label>추천인 코드 (선택)</label><input class="fc" id="signRef" placeholder="추천인 코드가 있으면 입력"></div>
+<div class="auth-agree">
+<label><input type="checkbox" id="agreeAll" onchange="toggleAllAgree()"> <strong>전체 동의</strong></label>
+<label><input type="checkbox" class="agreeItem"> [필수] 서비스 이용약관 동의</label>
+<label><input type="checkbox" class="agreeItem"> [필수] 개인정보 수집·이용 동의</label>
+<label><input type="checkbox" class="agreeItem"> [필수] 전자금융거래 이용약관 동의</label>
+<label><input type="checkbox" class="agreeItem"> [선택] 마케팅 정보 수신 동의</label>
+</div>
+<button class="btn btn-p btn-f btn-lg" onclick="doSignup()">회원가입</button>
+<div class="auth-divider"><span>간편 가입</span></div>
+<div class="auth-social">
+<button class="btn btn-o btn-f" onclick="socialLogin('kakao')" style="border-color:#FEE500;color:#3C1E1E;background:rgba(254,229,0,.15)">💬 카카오로 가입</button>
+<button class="btn btn-o btn-f" onclick="socialLogin('naver')" style="border-color:#03C75A;color:#03C75A;background:rgba(3,199,90,.08)">N 네이버로 가입</button>
+</div>
+</div>
+</div>
+
+<p style="color:var(--text3);font-size:.72rem;margin-top:1.5rem;text-align:center">© 2026 GoldSafe. 본 서비스는 금융투자상품이 아닌 물품 임치(보관) 및 유통 멤버십입니다.</p>
+</div>
+</div>
+
+<header class="header" id="mainHeader" style="display:none">
 <a class="logo"><div class="logo-icon">Au</div>골드세이프</a>
 <div class="hdr-right">
 <div class="hdr-bal"><span class="lbl">Pay</span><span class="val" id="hPay">0 P</span></div>
@@ -16,7 +70,7 @@
 <button class="hdr-btn" onclick="go('mypage')">👤 마이페이지</button>
 </div>
 </header>
-<nav class="nav">
+<nav class="nav" id="mainNav" style="display:none">
 <div class="nav-sec"><div class="nav-sec-t">서비스</div>
 <a class="nav-item active" data-p="dash"><span class="ic">📊</span>대시보드</a>
 <a class="nav-item" data-p="buy"><span class="ic">🪙</span>상품권 매입</a>
@@ -30,8 +84,12 @@
 <a class="nav-item" data-p="refund"><span class="ic">↩️</span>환급</a>
 <a class="nav-item" data-p="history"><span class="ic">📋</span>거래내역</a>
 </div>
+<div class="nav-sec"><div class="nav-sec-t">계정</div>
+<a class="nav-item" data-p="verify"><span class="ic">🛡️</span>본인인증</a>
+<a class="nav-item" data-p="mypage"><span class="ic">👤</span>마이페이지</a>
+</div>
 </nav>
-<div class="main">
+<div class="main" id="mainContent" style="display:none">
 <div class="toast-c" id="toastC"></div>
 
 <!-- DASHBOARD -->
@@ -78,7 +136,13 @@
 <h3 class="mb1">매입 정보</h3>
 <div class="fg"><label>수량</label><input type="number" class="fc" id="bQty" value="1" min="1" oninput="calcB()"></div>
 <div class="fg"><label>총액</label><input class="fc" id="bTotal" readonly></div>
-<div class="fg"><label>결제 방식</label><select class="fc" id="bMethod"><option>계좌이체</option><option>신용카드</option><option>Pay포인트</option><option>신용대출</option><option>담보대출</option></select></div>
+<div class="fg"><label>결제 방식</label><select class="fc" id="bMethod" onchange="showPayDetail(this.value)">
+<optgroup label="즉시 결제"><option value="card">💳 신용/체크카드</option><option value="bank">🏦 계좌이체 (실시간)</option><option value="phone">📱 휴대폰 결제</option><option value="pay">💰 Pay포인트</option></optgroup>
+<optgroup label="간편결제"><option value="kakao">카카오페이</option><option value="naver">네이버페이</option><option value="toss">토스페이</option><option value="samsung">삼성페이</option><option value="apple">Apple Pay</option></optgroup>
+<optgroup label="상품권/기타"><option value="culture">🎫 문화상품권</option><option value="book">📚 도서상품권</option><option value="happy">🎁 해피머니</option><option value="gift">🎀 기타 상품권</option></optgroup>
+<optgroup label="대출 연계"><option value="credit">📋 신용대출</option><option value="collateral">🏠 담보대출</option></optgroup>
+</select></div>
+<div id="payDetailBox" style="margin-bottom:1rem"></div>
 <button class="btn btn-p btn-f btn-lg" onclick="doBuy()">매입하기</button>
 </div>
 </div>
@@ -188,31 +252,99 @@
 <div class="page" id="p-mypage">
 <h2 class="pg-title">👤 마이페이지</h2>
 <div class="g2 mb15">
-<div class="card"><h3 class="mb1">회원 정보</h3><div class="rs"><div class="rr"><span>이름</span><span>홍길동</span></div><div class="rr"><span>등급</span><span style="color:var(--gold)">골드 멤버</span></div><div class="rr"><span>가입일</span><span>2026.01.15</span></div><div class="rr"><span>본인인증</span><span style="color:var(--green)">완료</span></div></div></div>
+<div class="card"><h3 class="mb1">회원 정보</h3><div class="rs"><div class="rr"><span>이름</span><span id="myName">미인증</span></div><div class="rr"><span>등급</span><span style="color:var(--gold)" id="myGrade">일반</span></div><div class="rr"><span>가입일</span><span>2026.01.15</span></div><div class="rr"><span>본인인증</span><span id="myVerifyStatus" style="color:var(--red)">미완료</span></div><div class="rr"><span>휴대폰</span><span id="myPhone">-</span></div></div><button class="btn btn-o btn-f" style="margin-top:.8rem" onclick="go('verify')">🛡️ 본인인증 하기</button></div>
 <div class="card"><h3 class="mb1">자산 요약</h3><div class="rs"><div class="rr"><span>보유 금</span><span id="m1">0g</span></div><div class="rr"><span>Pay포인트</span><span id="m2">0 P</span></div><div class="rr"><span>락업 중</span><span id="m3">0g</span></div><div class="rr"><span>예정 보너스</span><span id="m4">0g</span></div><div class="rr"><span>대출 잔액</span><span id="m5">0원</span></div></div></div>
 </div>
+<div class="card"><div class="card-hd"><h3>등록 결제수단</h3></div><div id="myPayMethods"><p style="color:var(--text3);text-align:center;padding:1rem">등록된 결제수단이 없습니다</p></div></div>
 <div class="card"><div class="card-hd"><h3>보유 금 시리얼번호</h3></div><div id="serials"><p style="color:var(--text3);text-align:center;padding:1rem">보유 금이 없습니다</p></div></div>
+</div>
+
+<!-- 본인인증 -->
+<div class="page" id="p-verify">
+<h2 class="pg-title">🛡️ 본인인증</h2>
+<p class="pg-sub">금상품권 거래를 위해 본인인증이 필요합니다. 아래 방법 중 하나를 선택하여 인증을 완료해주세요.</p>
+<div class="notice"><span class="ni">🔐</span>본인인증은 <strong>전자금융거래법</strong> 및 <strong>특정금융정보법</strong>에 따라 필수이며, 개인정보는 암호화되어 안전하게 보관됩니다.</div>
+
+<div id="verifyStatusBanner" class="cib" style="display:none;margin-bottom:1.2rem"><h4>✅ 인증 완료</h4><p id="verifyBannerInfo"></p></div>
+
+<div class="g2 mb15">
+<!-- 휴대폰 인증 -->
+<div class="card">
+<div class="card-hd"><h3>📱 휴대폰 인증</h3><span class="badge">추천</span></div>
+<p style="font-size:.82rem;color:var(--text2);margin-bottom:1rem">통신사를 통한 본인인증 (PASS/문자)</p>
+<div class="fg"><label>이름</label><input class="fc" id="vName" placeholder="실명 입력"></div>
+<div class="fg"><label>주민등록번호</label><div style="display:flex;gap:6px"><input class="fc" id="vSSN1" maxlength="6" placeholder="앞 6자리" style="flex:1"><input class="fc" id="vSSN2" type="password" maxlength="7" placeholder="뒤 7자리" style="flex:1"></div></div>
+<div class="fg"><label>통신사</label><select class="fc" id="vCarrier"><option>SKT</option><option>KT</option><option>LG U+</option><option>알뜰폰 (SKT)</option><option>알뜰폰 (KT)</option><option>알뜰폰 (LG)</option></select></div>
+<div class="fg"><label>휴대폰 번호</label><div style="display:flex;gap:6px"><input class="fc" id="vPhone" placeholder="01012345678" style="flex:1"><button class="btn btn-o" onclick="sendVerifyCode()">인증번호 발송</button></div></div>
+<div class="fg" id="vCodeBox" style="display:none"><label>인증번호</label><div style="display:flex;gap:6px"><input class="fc" id="vCode" placeholder="6자리 입력" maxlength="6" style="flex:1"><span id="vTimer" style="color:var(--red);font-size:.85rem;align-self:center;min-width:40px"></span></div></div>
+<button class="btn btn-p btn-f btn-lg" onclick="doPhoneVerify()">📱 휴대폰 인증 완료</button>
+</div>
+
+<!-- 신분증 인증 -->
+<div class="card">
+<div class="card-hd"><h3>🪪 신분증 인증</h3><span class="badge">대면</span></div>
+<p style="font-size:.82rem;color:var(--text2);margin-bottom:1rem">주민등록증/운전면허증 촬영을 통한 비대면 실명확인</p>
+<div class="fg"><label>신분증 유형</label><select class="fc" id="idType"><option>주민등록증</option><option>운전면허증</option><option>여권</option><option>외국인등록증</option></select></div>
+<div class="fg"><label>신분증 앞면 촬영</label><input type="file" class="fc" id="idFront" accept="image/*" capture="environment" style="padding:8px"></div>
+<div class="fg"><label>신분증 뒷면 촬영 (주민등록증만)</label><input type="file" class="fc" id="idBack" accept="image/*" capture="environment" style="padding:8px"></div>
+<div class="fg"><label>셀카 촬영 (활성도 검증)</label><input type="file" class="fc" id="idSelfie" accept="image/*" capture="user" style="padding:8px"></div>
+<button class="btn btn-p btn-f btn-lg" onclick="doIdVerify()">🪪 신분증 인증 제출</button>
+</div>
+</div>
+
+<!-- 추가 인증 -->
+<div class="g2 mb15">
+<div class="card">
+<div class="card-hd"><h3>🔑 아이핀 인증</h3></div>
+<p style="font-size:.82rem;color:var(--text2);margin-bottom:1rem">한국인터넷진흥원(KISA) 아이핀을 통한 본인인증</p>
+<div class="fg"><label>아이핀 ID</label><input class="fc" id="ipinId" placeholder="아이핀 아이디"></div>
+<div class="fg"><label>비밀번호</label><input class="fc" type="password" id="ipinPw" placeholder="비밀번호"></div>
+<button class="btn btn-p btn-f" onclick="doIpinVerify()">🔑 아이핀 인증</button>
+</div>
+
+<div class="card">
+<div class="card-hd"><h3>🏦 계좌 인증</h3></div>
+<p style="font-size:.82rem;color:var(--text2);margin-bottom:1rem">본인 명의 계좌로 1원 송금 인증</p>
+<div class="fg"><label>은행 선택</label><select class="fc" id="acctBank"><option>국민은행</option><option>신한은행</option><option>하나은행</option><option>우리은행</option><option>농협</option><option>기업은행</option><option>카카오뱅크</option><option>토스뱅크</option><option>케이뱅크</option></select></div>
+<div class="fg"><label>계좌번호</label><input class="fc" id="acctNum" placeholder="-없이 입력"></div>
+<div class="fg" id="acctCodeBox" style="display:none"><label>입금자명 4글자</label><input class="fc" id="acctCode" placeholder="입금자명 확인" maxlength="4"></div>
+<button class="btn btn-p btn-f" onclick="doAcctVerify()">🏦 1원 인증 요청</button>
+</div>
+</div>
+
+<div class="disclaimer"><strong>⚠️ 개인정보 보호 안내:</strong> 수집된 개인정보는 전자금융거래법에 따라 본인인증 목적으로만 사용되며, 암호화하여 보관합니다. 인증 후 주민등록번호 뒷자리는 즉시 파기됩니다.</div>
 </div>
 
 <!-- BLOCKCHAIN -->
 <div class="page" id="p-chain">
-<h2 class="pg-title">⛓️ 블록체인 상품권 발행</h2>
-<p class="pg-sub">모든 금상품권은 블록체인에 기록되어 위변조가 불가능합니다. SHA-256 해시로 연결된 불변 원장에서 발행·검증합니다.</p>
-<div class="notice"><span class="ni">🔐</span>각 상품권은 고유 해시값으로 <strong>위변조 방지</strong>되며, 블록체인 탐색기에서 누구나 검증할 수 있습니다.</div>
+<h2 class="pg-title">⛓️ 블록체인 QR 상품권 발행</h2>
+<p class="pg-sub">모든 금상품권은 블록체인에 기록되고 QR코드로 발행됩니다. QR 스캔으로 즉시 위변조 검증이 가능합니다.</p>
+<div class="notice"><span class="ni">🔐</span>각 상품권은 SHA-256 해시 + <strong>QR코드</strong>로 위변조가 원천 차단되며, 누구나 스캔하여 검증할 수 있습니다.</div>
 
 <div class="g2 mb15">
+<!-- MINT -->
 <div class="card">
-<div class="card-hd"><h3>🪙 상품권 발행 (Mint)</h3><span class="badge">On-Chain</span></div>
+<div class="card-hd"><h3>🪙 QR 상품권 발행</h3><span class="badge">Mint + QR</span></div>
 <div class="fg"><label>중량 선택</label><select class="fc" id="mintWeight"><option value="1">1g</option><option value="5">5g</option><option value="10" selected>10g</option><option value="50">50g</option><option value="100">100g</option><option value="1000">1kg</option></select></div>
 <div class="fg"><label>소유자</label><input class="fc" id="mintOwner" value="홍길동" placeholder="소유자 이름"></div>
 <div class="fg"><label>순도</label><input class="fc" value="99.9% (24K)" readonly></div>
-<button class="btn btn-p btn-f btn-lg" onclick="mintCert()">⛓️ 블록체인 발행</button>
+<button class="btn btn-p btn-f btn-lg" onclick="mintCert()">⛓️ 블록체인 발행 + QR 생성</button>
+<div id="mintQrResult" style="margin-top:1rem;text-align:center"></div>
 </div>
 
+<!-- VERIFY -->
 <div class="card">
-<div class="card-hd"><h3>🔍 상품권 검증</h3><span class="badge">Verify</span></div>
-<div class="fg"><label>해시값 또는 시리얼번호 입력</label><input class="fc" id="verifyInput" placeholder="0x... 또는 AU-2026-XXXXXX"></div>
+<div class="card-hd"><h3>🔍 QR 스캔 검증</h3><span class="badge">Scan & Verify</span></div>
+<div class="tabs"><div class="tab active" onclick="switchVerifyMode(this,'manual')">직접 입력</div><div class="tab" onclick="switchVerifyMode(this,'scan')">📷 QR 스캔</div></div>
+<div id="verifyManual">
+<div class="fg"><label>해시값 또는 시리얼번호</label><input class="fc" id="verifyInput" placeholder="0x... 또는 AU-2026-XXXXXX"></div>
 <button class="btn btn-p btn-f" onclick="verifyCert()">검증하기</button>
+</div>
+<div id="verifyScan" style="display:none">
+<div id="qrReader" style="width:100%;border-radius:10px;overflow:hidden;margin-bottom:1rem"></div>
+<button class="btn btn-o btn-f" onclick="startQrScan()">📷 카메라 스캔 시작</button>
+<button class="btn btn-o btn-f" onclick="stopQrScan()" style="margin-top:.5rem">⏹ 스캔 중지</button>
+</div>
 <div id="verifyResult" style="margin-top:1rem"></div>
 </div>
 </div>
@@ -233,14 +365,25 @@
 
 <!-- Issued Certificates -->
 <div class="card">
-<div class="card-hd"><h3>📜 발행된 상품권 목록</h3><button class="btn btn-o btn-sm" onclick="validateChain()">🔒 체인 무결성 검증</button></div>
-<table class="tbl"><thead><tr><th>블록#</th><th>시리얼</th><th>중량</th><th>소유자</th><th>해시</th><th>상태</th></tr></thead><tbody id="certList"></tbody></table>
+<div class="card-hd"><h3>📜 발행된 상품권</h3><button class="btn btn-o btn-sm" onclick="validateChain()">🔒 체인 검증</button></div>
+<table class="tbl"><thead><tr><th>블록#</th><th>시리얼</th><th>중량</th><th>소유자</th><th>해시</th><th>QR</th><th>상태</th></tr></thead><tbody id="certList"></tbody></table>
 </div>
 </div>
 
 </div>
 
 <!-- MODALS -->
+<!-- QR Certificate Modal -->
+<div class="modal-ov" id="mQrCert"><div class="modal" style="max-width:420px;text-align:center">
+<div class="modal-hd"><h3>🪙 QR 금상품권</h3><button class="modal-x" onclick="closeM('mQrCert')">×</button></div>
+<div id="certQrDisplay" style="display:inline-block;padding:16px;background:#fff;border-radius:12px;margin-bottom:1rem"></div>
+<div id="certQrInfo"></div>
+<div style="display:flex;gap:.5rem;margin-top:1rem">
+<button class="btn btn-p btn-f" onclick="downloadQr()">📥 QR 다운로드</button>
+<button class="btn btn-o btn-f" onclick="printQr()">🖨️ 인쇄</button>
+</div>
+</div></div>
+
 <div class="modal-ov" id="mPay"><div class="modal"><div class="modal-hd"><h3>💳 결제</h3><button class="modal-x" onclick="closeM('mPay')">×</button></div>
 <div class="fg"><label>결제 금액</label><input type="number" class="fc" id="payAmt" placeholder="금액"></div>
 <div class="fg"><label>가맹점</label><input class="fc" id="payTo" placeholder="결제 대상"></div>
