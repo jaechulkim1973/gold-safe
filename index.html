@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>골드세이프 - 금 실물 보관 멤버십</title>
+<meta name="description" content="금상품권 매입, 락업 보상, Pay포인트 전환 - 실물 기반 교환 서비스">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="header">
+<a class="logo"><div class="logo-icon">Au</div>골드세이프</a>
+<div class="hdr-right">
+<div class="hdr-bal"><span class="lbl">Pay</span><span class="val" id="hPay">0 P</span></div>
+<div class="hdr-bal"><span class="lbl">금</span><span class="val" id="hGold">0g</span></div>
+<button class="hdr-btn" onclick="go('mypage')">👤 마이페이지</button>
+</div>
+</header>
+<nav class="nav">
+<div class="nav-sec"><div class="nav-sec-t">서비스</div>
+<a class="nav-item active" data-p="dash"><span class="ic">📊</span>대시보드</a>
+<a class="nav-item" data-p="buy"><span class="ic">🪙</span>상품권 매입</a>
+<a class="nav-item" data-p="lockup"><span class="ic">🔒</span>락업 보관</a>
+<a class="nav-item" data-p="calc"><span class="ic">🧮</span>리워드 계산기</a>
+</div>
+<div class="nav-sec"><div class="nav-sec-t">자산</div>
+<a class="nav-item" data-p="wallet"><span class="ic">💳</span>Pay 월렛</a>
+<a class="nav-item" data-p="loan"><span class="ic">🏦</span>대출 매입</a>
+<a class="nav-item" data-p="refund"><span class="ic">↩️</span>환급</a>
+<a class="nav-item" data-p="history"><span class="ic">📋</span>거래내역</a>
+</div>
+</nav>
+<div class="main">
+<div class="toast-c" id="toastC"></div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="p-dash">
+<div class="hero"><h1>당신의 금은 안전하게<br><span class="gold-shm">자라고 있나요?</span></h1>
+<p>사두기만 했던 금, 이제 안심 보관하고 회사가 드리는 실물 금 보너스까지 챙기세요.</p></div>
+<div class="notice"><span class="ni">📢</span>본 서비스는 금융상품이 아닌 <strong>물품 임치(보관) 및 유통 멤버십</strong>입니다.</div>
+<div class="stats">
+<div class="st"><div class="si g">🪙</div><div class="sv" id="s1">0g</div><div class="sl">보유 금(실물)</div><div class="sc up">보관중</div></div>
+<div class="st"><div class="si gr">💰</div><div class="sv" id="s2">0 P</div><div class="sl">Pay 포인트</div><div class="sc up">사용가능</div></div>
+<div class="st"><div class="si bl">🔒</div><div class="sv" id="s3">0g</div><div class="sl">락업 중</div><div class="sc up">보상 적립중</div></div>
+<div class="st"><div class="si pu">🎁</div><div class="sv" id="s4">0g</div><div class="sl">예정 보너스</div><div class="sc up">증량 예정</div></div>
+</div>
+<div class="trust-grid">
+<div class="trust-card"><div class="ti">🏛️</div><h4>실물 수탁 보관</h4><p>한국금거래소 제휴 수탁기관 실물 입고 확인서 제공</p></div>
+<div class="trust-card"><div class="ti">🛡️</div><h4>종합보험 가입</h4><p>도난·화재 등 사고 대비 종합보험 가입 및 증서 공시</p></div>
+<div class="trust-card"><div class="ti">🔍</div><h4>시리얼번호 조회</h4><p>마이페이지에서 본인 금 시리얼번호 실시간 조회 가능</p></div>
+</div>
+<div class="g23 mb15">
+<div class="card"><div class="card-hd"><h3>최근 거래</h3><span class="badge">최신</span></div>
+<table class="tbl"><thead><tr><th>일시</th><th>유형</th><th>금액</th><th>상태</th></tr></thead><tbody id="rtx"></tbody></table></div>
+<div class="card"><div class="card-hd"><h3>락업 현황</h3></div><div id="lockStat"><p style="color:var(--text3);text-align:center;padding:1.5rem">락업 내역 없음</p></div></div>
+</div>
+<div class="disclaimer"><strong>⚠️ 필수 고지:</strong> 금 시세 변동에 따라 자산 가치가 변동될 수 있습니다. 본 서비스는 원금을 보장하지 않으며, 리워드는 회사 영업이익에 따라 변동될 수 있습니다. 이 서비스는 금융투자상품이 아닌 실물 금 보관·유통 멤버십입니다.</div>
+</div>
+
+<!-- BUY -->
+<div class="page" id="p-buy">
+<h2 class="pg-title">🪙 금상품권 매입</h2>
+<p class="pg-sub">실물 금 교환권을 매입합니다. 매입 즉시 소유권이 귀속되며, Pay포인트 전환 또는 실물 수령이 가능합니다.</p>
+<div class="gpb"><div><h2>금 시세 <span id="gp">₩95,200</span>/g</h2><p>2026.04.29 기준 · 한국금거래소</p></div></div>
+<div class="notice"><span class="ni">ℹ️</span>매입 즉시 실물 소유권은 고객에게 귀속되며, 회사는 수탁 보관만을 수행합니다.</div>
+<h3 class="mb1">상품권 선택</h3>
+<div class="cg" id="certGrid">
+<div class="cc" onclick="selC(this,1,95200)"><div class="cw">1g</div><div class="cu">순금 99.9%</div><div class="cp">₩95,200</div></div>
+<div class="cc" onclick="selC(this,5,476000)"><div class="cw">5g</div><div class="cu">순금 99.9%</div><div class="cp">₩476,000</div></div>
+<div class="cc" onclick="selC(this,10,952000)"><div class="cw">10g</div><div class="cu">순금 99.9%</div><div class="cp">₩952,000</div><div class="cd">인기</div></div>
+<div class="cc" onclick="selC(this,50,4760000)"><div class="cw">50g</div><div class="cu">순금 99.9%</div><div class="cp">₩4,760,000</div></div>
+<div class="cc" onclick="selC(this,100,9520000)"><div class="cw">100g</div><div class="cu">골드바</div><div class="cp">₩9,520,000</div><div class="cd">-2%</div></div>
+<div class="cc" onclick="selC(this,1000,95200000)"><div class="cw">1kg</div><div class="cu">골드바</div><div class="cp">₩95,200,000</div><div class="cd">-3%</div></div>
+</div>
+<div class="card" style="max-width:500px">
+<h3 class="mb1">매입 정보</h3>
+<div class="fg"><label>수량</label><input type="number" class="fc" id="bQty" value="1" min="1" oninput="calcB()"></div>
+<div class="fg"><label>총액</label><input class="fc" id="bTotal" readonly></div>
+<div class="fg"><label>결제 방식</label><select class="fc" id="bMethod"><option>계좌이체</option><option>신용카드</option><option>Pay포인트</option><option>신용대출</option><option>담보대출</option></select></div>
+<button class="btn btn-p btn-f btn-lg" onclick="doBuy()">매입하기</button>
+</div>
+</div>
+
+<!-- LOCKUP -->
+<div class="page" id="p-lockup">
+<h2 class="pg-title">🔒 금 실물 보관 락업</h2>
+<p class="pg-sub">보유 금을 안심 보관하고, 보관 기간에 따른 실물 금 보너스(증량) 리워드를 받으세요. 리워드 재원은 회사 영업이익입니다.</p>
+<div class="notice"><span class="ni">🔒</span>고객 소유 금을 수탁 보관하며, 락업 종료 시 <strong>실물 금 증량(Bonus Gold)</strong>으로 리워드를 지급합니다.</div>
+<div class="lt">
+<div class="tc" onclick="selT(this,6,2)"><div class="tp">6개월 보관</div><div class="tn">실버 멤버십</div><div class="td">+2%</div><div class="tdesc">보관 리워드 (증량)</div>
+<ul><li>6개월 후 실물+보너스 인도</li><li>100g 기준 → 102g 수령</li><li>중도 해지 시 리워드 소멸</li><li>보관료·보험료 면제</li></ul>
+<button class="btn btn-o btn-f" style="margin-top:.8rem">선택</button></div>
+<div class="tc pop" onclick="selT(this,12,4)"><div class="tp">12개월 보관</div><div class="tn">골드 멤버십</div><div class="td">+4%</div><div class="tdesc">보관 리워드 (증량)</div>
+<ul><li>12개월 후 실물+보너스 인도</li><li>100g 기준 → 104g 수령</li><li>중도 해지 시 리워드 소멸</li><li>보관료·보험료 면제</li></ul>
+<button class="btn btn-p btn-f" style="margin-top:.8rem">선택</button></div>
+<div class="tc" onclick="selT(this,24,9)"><div class="tp">24개월 보관</div><div class="tn">플래티넘 멤버십</div><div class="td">+9%</div><div class="tdesc">보관 리워드 (증량)</div>
+<ul><li>24개월 후 실물+보너스 인도</li><li>100g 기준 → 109g 수령</li><li>중도 해지 시 리워드 소멸</li><li>보관료·보험료·배송비 면제</li></ul>
+<button class="btn btn-o btn-f" style="margin-top:.8rem">선택</button></div>
+</div>
+<div class="card" style="max-width:500px" id="lockForm">
+<h3 class="mb1">락업 신청</h3>
+<div class="fg"><label>보관할 금 중량(g)</label><input type="number" class="fc" id="lGram" value="100" min="1" oninput="calcL()"></div>
+<div class="fg"><label>보관 기간</label><input class="fc" id="lTier" readonly value="선택해주세요"></div>
+<div class="fg"><label>예상 보너스 증량</label><input class="fc" id="lBonus" readonly></div>
+<div class="fg"><label>최종 수령 예정 중량</label><input class="fc" id="lFinal" readonly></div>
+<div class="disclaimer"><strong>⚠️ 약관 고지:</strong> 리워드는 회사 경영상황(영업이익)에 따라 변동될 수 있으며, 확정 수익을 보장하지 않습니다. 중도 해지 시 리워드는 소멸됩니다. 금 시세 변동에 따른 자산가치 변동 가능성이 있습니다.</div>
+<button class="btn btn-p btn-f btn-lg" onclick="doLock()">락업 신청</button>
+</div>
+</div>
+
+<!-- CALC -->
+<div class="page" id="p-calc">
+<h2 class="pg-title">🧮 리워드 계산기</h2>
+<p class="pg-sub">보관 수량과 기간을 입력하면 예상 수령 중량을 확인할 수 있습니다.</p>
+<div class="calc-box">
+<div class="fg"><label>보관 수량 (g)</label><input type="number" class="fc" id="cGram" value="100" min="1" oninput="doCalc()"></div>
+<div class="fg"><label>보관 기간</label><select class="fc" id="cPeriod" onchange="doCalc()"><option value="6">6개월 (+2%)</option><option value="12" selected>12개월 (+4%)</option><option value="24">24개월 (+9%)</option></select></div>
+<div class="calc-result">
+<div class="cr-sub">최종 수령 예정 중량</div>
+<div class="cr-main" id="crMain">104g</div>
+<div class="cr-sub" id="crSub">기본 100g + 보너스 4g</div>
+<div class="cr-detail">
+<div class="crd"><div class="crd-v" id="crBase">100g</div><div class="crd-l">기본 수량</div></div>
+<div class="crd"><div class="crd-v" id="crBon">4g</div><div class="crd-l">보너스 증량</div></div>
+<div class="crd"><div class="crd-v" id="crSave">₩0</div><div class="crd-l">보관료 절감</div></div>
+</div></div>
+</div>
+</div>
+
+<!-- WALLET -->
+<div class="page" id="p-wallet">
+<h2 class="pg-title">💳 Pay 월렛</h2>
+<p class="pg-sub">매입 전환된 Pay포인트로 결제·출금·송금이 가능합니다.</p>
+<div class="wb"><div class="wl">보유 Pay포인트</div><div class="wa" id="wAmt">0 P</div><div class="ws">₩1 = 1P · 전국 가맹점 결제</div>
+<div class="w-acts"><button class="btn btn-p" onclick="openM('mPay')">💳 결제</button><button class="btn btn-o" onclick="openM('mWd')">🏧 출금</button><button class="btn btn-o" onclick="openM('mTf')">📤 송금</button></div></div>
+<div class="acg">
+<div class="ac" onclick="openM('mPay')"><div class="ai">💳</div><h4>결제하기</h4><p>가맹점 QR결제</p></div>
+<div class="ac" onclick="openM('mWd')"><div class="ai">🏧</div><h4>출금하기</h4><p>계좌로 출금</p></div>
+<div class="ac" onclick="openM('mTf')"><div class="ai">📤</div><h4>송금하기</h4><p>회원간 송금</p></div>
+</div>
+<div class="card"><div class="card-hd"><h3>포인트 내역</h3></div><table class="tbl"><thead><tr><th>일시</th><th>내용</th><th>금액</th></tr></thead><tbody id="pHist"></tbody></table></div>
+</div>
+
+<!-- LOAN -->
+<div class="page" id="p-loan">
+<h2 class="pg-title">🏦 대출 연계 매입</h2>
+<p class="pg-sub">신용대출 또는 담보대출을 연계하여 금상품권을 매입할 수 있습니다.</p>
+<div class="cib"><h4>📋 대출 연계 매입 안내</h4><p>제휴 금융기관의 신용대출·담보대출을 통해 금상품권을 매입하고, 즉시 Pay포인트로 전환 가능합니다. 매입한 금 실물은 고객 소유이며, 대출 상환과는 별도로 관리됩니다.</p></div>
+<div class="g2 mb15">
+<div class="card"><h3 class="mb1">신용대출 매입</h3>
+<div class="fg"><label>대출 희망 금액</label><input type="number" class="fc" id="clAmt" placeholder="최대 5,000만원"></div>
+<div class="fg"><label>상환 기간</label><select class="fc" id="clTerm"><option>6개월</option><option selected>12개월</option><option>24개월</option></select></div>
+<div class="fg"><label>예상 금리 (연)</label><input class="fc" value="연 6.9% ~ 12.5%" readonly></div>
+<button class="btn btn-p btn-f" onclick="doLoan('credit')">신용대출 매입 신청</button></div>
+<div class="card"><h3 class="mb1">담보대출 매입</h3>
+<div class="fg"><label>담보 유형</label><select class="fc" id="coType"><option>금 실물</option><option>부동산</option><option>기타 자산</option></select></div>
+<div class="fg"><label>담보 평가액</label><input type="number" class="fc" id="coVal" placeholder="담보 자산 평가액"></div>
+<div class="fg"><label>매입 희망액 (최대 70%)</label><input type="number" class="fc" id="coAmt" placeholder="매입 금액"></div>
+<button class="btn btn-p btn-f" onclick="doLoan('collateral')">담보대출 매입 신청</button></div>
+</div>
+<div class="cm"><div class="mb"><div class="mf" id="cFill" style="width:20%"></div></div><div class="ml"><span>사용: <span id="cUsed">0원</span></span><span>한도: <span id="cLim">50,000,000원</span></span></div></div>
+</div>
+
+<!-- REFUND -->
+<div class="page" id="p-refund">
+<h2 class="pg-title">↩️ 환급 신청</h2>
+<p class="pg-sub">보유 상품권·포인트를 환급받을 수 있습니다. 또는 실물 금 인도를 요청할 수 있습니다.</p>
+<div class="notice"><span class="ni">⚠️</span>환급 수수료 3% · 실물 인도 시 배송비 별도 · 락업 중 건은 해지 후 환급 가능</div>
+<div class="card" style="max-width:550px">
+<div class="tabs"><div class="tab active" onclick="rTab(this,'point')">포인트 환급</div><div class="tab" onclick="rTab(this,'gold')">실물 금 인도</div></div>
+<div class="fg"><label>환급 금액 (원) / 인도 중량(g)</label><input type="number" class="fc" id="rfAmt" placeholder="금액 입력" oninput="calcR()"></div>
+<div class="rs"><div class="rr"><span>요청액</span><span id="rReq">0</span></div><div class="rr"><span>수수료 (3%)</span><span id="rFee">0</span></div><div class="rr"><span>실수령</span><span id="rNet">0</span></div></div>
+<div class="fg"><label>입금계좌 / 배송지</label><input class="fc" id="rfAcct" placeholder="은행+계좌 또는 주소"></div>
+<button class="btn btn-p btn-f btn-lg" onclick="doRefund()">환급 신청</button>
+</div>
+</div>
+
+<!-- HISTORY -->
+<div class="page" id="p-history">
+<h2 class="pg-title">📋 거래내역</h2>
+<div class="tabs"><div class="tab active" onclick="fHist(this,'all')">전체</div><div class="tab" onclick="fHist(this,'buy')">매입</div><div class="tab" onclick="fHist(this,'lock')">락업</div><div class="tab" onclick="fHist(this,'pay')">결제</div><div class="tab" onclick="fHist(this,'refund')">환급</div></div>
+<div class="card"><table class="tbl"><thead><tr><th>일시</th><th>유형</th><th>상세</th><th>금액</th><th>상태</th></tr></thead><tbody id="hTb"></tbody></table></div>
+</div>
+
+<!-- MYPAGE -->
+<div class="page" id="p-mypage">
+<h2 class="pg-title">👤 마이페이지</h2>
+<div class="g2 mb15">
+<div class="card"><h3 class="mb1">회원 정보</h3><div class="rs"><div class="rr"><span>이름</span><span>홍길동</span></div><div class="rr"><span>등급</span><span style="color:var(--gold)">골드 멤버</span></div><div class="rr"><span>가입일</span><span>2026.01.15</span></div><div class="rr"><span>본인인증</span><span style="color:var(--green)">완료</span></div></div></div>
+<div class="card"><h3 class="mb1">자산 요약</h3><div class="rs"><div class="rr"><span>보유 금</span><span id="m1">0g</span></div><div class="rr"><span>Pay포인트</span><span id="m2">0 P</span></div><div class="rr"><span>락업 중</span><span id="m3">0g</span></div><div class="rr"><span>예정 보너스</span><span id="m4">0g</span></div><div class="rr"><span>대출 잔액</span><span id="m5">0원</span></div></div></div>
+</div>
+<div class="card"><div class="card-hd"><h3>보유 금 시리얼번호</h3></div><div id="serials"><p style="color:var(--text3);text-align:center;padding:1rem">보유 금이 없습니다</p></div></div>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-ov" id="mPay"><div class="modal"><div class="modal-hd"><h3>💳 결제</h3><button class="modal-x" onclick="closeM('mPay')">×</button></div>
+<div class="fg"><label>결제 금액</label><input type="number" class="fc" id="payAmt" placeholder="금액"></div>
+<div class="fg"><label>가맹점</label><input class="fc" id="payTo" placeholder="결제 대상"></div>
+<button class="btn btn-p btn-f" onclick="doPay()">결제하기</button></div></div>
+
+<div class="modal-ov" id="mWd"><div class="modal"><div class="modal-hd"><h3>🏧 출금</h3><button class="modal-x" onclick="closeM('mWd')">×</button></div>
+<div class="fg"><label>출금 금액</label><input type="number" class="fc" id="wdAmt" placeholder="금액"></div>
+<div class="fg"><label>입금 계좌</label><input class="fc" id="wdAcct" placeholder="은행+계좌"></div>
+<p style="font-size:.78rem;color:var(--text3);margin-bottom:.8rem">수수료 1,000원 · 1~2영업일</p>
+<button class="btn btn-p btn-f" onclick="doWd()">출금 신청</button></div></div>
+
+<div class="modal-ov" id="mTf"><div class="modal"><div class="modal-hd"><h3>📤 송금</h3><button class="modal-x" onclick="closeM('mTf')">×</button></div>
+<div class="fg"><label>수신자</label><input class="fc" id="tfTo" placeholder="회원ID"></div>
+<div class="fg"><label>금액</label><input type="number" class="fc" id="tfAmt" placeholder="포인트"></div>
+<button class="btn btn-p btn-f" onclick="doTf()">송금하기</button></div></div>
+
+<script src="script.js"></script>
+</body>
+</html>
