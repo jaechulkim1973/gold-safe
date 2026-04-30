@@ -708,6 +708,73 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ===== OFFLINE KIOSK =====
+function calcKiosk(){
+  const unit=parseFloat(document.getElementById('kioskUnit').value)||1;
+  const qty=parseInt(document.getElementById('kioskQty').value)||1;
+  const gram=unit*qty;
+  const fee=gram<10?(gram<3.75?3000:5000):0;
+  const vat=Math.round(gram*goldPricePerGram*0.1);
+  const total=Math.round(gram*goldPricePerGram)+vat+fee;
+  document.getElementById('kioskGram').value=gram+'g';
+  document.getElementById('kioskPrice').value='₩'+F(total)+' (시가 ₩'+F(Math.round(gram*goldPricePerGram))+' + VAT ₩'+F(vat)+' + 수수료 ₩'+F(fee)+')';
+}
+calcKiosk();
+
+function doKiosk(){
+  if(!S.verified)return toast('본인인증이 필요합니다.','error');
+  const unit=parseFloat(document.getElementById('kioskUnit').value);
+  const qty=parseInt(document.getElementById('kioskQty').value)||1;
+  const gram=unit*qty;
+  if(gram>S.gold)return toast('보유 금이 부족합니다. 현재 '+F(S.gold)+'g','error');
+  const loc=document.getElementById('kioskLocation').value;
+  const sn='AU-2026-'+String(serialNo++).padStart(6,'0');
+  S.gold-=gram;
+  addTx('refund','실물교환 '+gram+'g → '+loc.split(' ').slice(-1)[0],-Math.round(gram*goldPricePerGram),'pend');
+  // Add to kiosk history
+  const tb=document.getElementById('kioskHistory');
+  const row=`<tr><td>${now()}</td><td>${gram}g</td><td>${loc}</td><td style="color:var(--gold)">${sn}</td><td><span class="sb pend">수령대기</span></td></tr>`;
+  if(tb.querySelector('td[colspan]'))tb.innerHTML='';
+  tb.innerHTML=row+tb.innerHTML;
+  toast(`교환 QR 발급 완료! ${gram}g → ${loc.split(' ').slice(-1)[0]}에서 수령하세요`);
+  upd();
+}
+
+// ===== SUBSCRIPTION =====
+let selSubPlan={name:'',amt:0,bonus:0};
+function selSub(el,name,amt,bonus){
+  document.querySelectorAll('#p-sub .tc').forEach(c=>c.style.borderColor='');
+  el.style.borderColor='var(--gold)';
+  selSubPlan={name,amt,bonus};
+  const labels={light:'라이트',standard:'스탠다드',premium:'프리미엄'};
+  document.getElementById('subPlan').value=labels[name]+' ('+{light:'자유',standard:'6개월',premium:'12개월'}[name]+' 약정)';
+  document.getElementById('subAmt').value='₩'+F(amt)+'/월';
+  // Simulation
+  const months=12;
+  const totalInvest=amt*months;
+  const gram=+(totalInvest/goldPricePerGram).toFixed(2);
+  const bonusGram=+(gram*bonus/100).toFixed(2);
+  document.getElementById('subSimGold').textContent=(gram+bonusGram).toFixed(2)+'g';
+  document.getElementById('subSimVal').textContent='기본 '+gram+'g + 보너스 '+bonusGram+'g (₩'+F(totalInvest)+' 투자)';
+}
+
+function doSub(){
+  if(!S.verified)return toast('본인인증이 필요합니다.','error');
+  if(!selSubPlan.amt)return toast('플랜을 선택하세요','error');
+  const day=document.getElementById('subDay').value;
+  const pay=document.getElementById('subPay').value;
+  const labels={light:'라이트',standard:'스탠다드',premium:'프리미엄'};
+  // Simulate first month
+  const gram=+(selSubPlan.amt/goldPricePerGram).toFixed(4);
+  S.gold+=gram;S.pay+=selSubPlan.amt;
+  addTx('buy',labels[selSubPlan.name]+' 구독 1회차 ('+gram+'g)',selSubPlan.amt,'done');
+  // Show status
+  const el=document.getElementById('mySubStatus');
+  el.innerHTML=`<div class="rs"><div class="rr"><span>플랜</span><span style="color:var(--gold)">${labels[selSubPlan.name]}</span></div><div class="rr"><span>월 적립액</span><span>₩${F(selSubPlan.amt)}</span></div><div class="rr"><span>결제일</span><span>${day}</span></div><div class="rr"><span>결제수단</span><span>${pay}</span></div><div class="rr"><span>보너스</span><span style="color:var(--green)">${selSubPlan.bonus?'+'+selSubPlan.bonus+'%':'없음'}</span></div><div class="rr"><span>누적 적립</span><span>${gram}g</span></div><div class="rr"><span>상태</span><span style="color:var(--green)">● 구독중</span></div></div>`;
+  toast(`${labels[selSubPlan.name]} 구독 시작! 매월 ${day} 자동 적립됩니다.`);
+  upd();
+}
+
 // ===== INIT =====
 fetchGoldPrice();
 setInterval(fetchGoldPrice, 300000);
